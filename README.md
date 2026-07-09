@@ -150,6 +150,6 @@ Teleoperate M2 with a checkpoint
 |---|---|
 | [Articulation Setup](docs/articulation.md) | Configuring M2 as an Isaac Lab articulation |
 | [Task Setup](docs/task_setup.md) | Flat and rough terrain task registration and MDP design |
-| [Policy & Training](docs/policy_training.md) | PPO architecture and hyperparameter reference |
+| [Policy & Training](docs/policy.md) | PPO architecture and hyperparameter reference |
 | [Reward Functions](docs/rewards.md) | Reward terms, tuning rationale, and formulas |
 | [OOD Findings](docs/OOD_findings.md) | OOD Metrics and Visual Comparisons between M2 baseline and Go2 baseline|
