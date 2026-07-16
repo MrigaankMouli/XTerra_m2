@@ -314,3 +314,33 @@ def stable_progress(
     stability = torch.exp(-2.0 * (torch.square(pitch_rate)+torch.square(roll_rate)))
     return torch.where(cmd_vel>0.1, lin_vel*stability, torch.zeros_like(lin_vel))
 
+def low_progress(
+    env: ManagerBasedRLEnv,
+    min_displacement: float = 0.25,
+    grace_period_s: float = 3.0,
+    command_name: str = "base_velocity",
+    min_command: float = 0.2,
+    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
+) -> torch.Tensor:
+    """Terminate if the robot has barely moved despite receiving a locomotion command."""
+
+    asset: Articulation = env.scene[asset_cfg.name]
+
+    # Distance travelled from the spawn position of the current episode
+    displacement = torch.linalg.norm(
+        asset.data.root_pos_w[:, :2] - env.scene.env_origins[:, :2],
+        dim=1,
+    )
+
+    # Ignore the first few seconds
+    grace_steps = int(grace_period_s / env.step_dt)
+
+    # Only terminate if we actually asked the robot to move
+    command = env.command_manager.get_command(command_name)
+    cmd_mag = torch.linalg.norm(command[:, :2], dim=1)
+
+    return (
+        (env.episode_length_buf > grace_steps)
+        & (cmd_mag > min_command)
+        & (displacement < min_displacement)
+    )

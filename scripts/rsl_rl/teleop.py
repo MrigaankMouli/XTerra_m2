@@ -183,19 +183,12 @@ def main():
 
         with torch.inference_mode():
 
-            temp_command = keyboard.advance()
+            command = keyboard.advance()
 
-            temp_command = temp_command.unsqueeze(0).repeat(
+            command = command.unsqueeze(0).repeat(
                 env.num_envs,
                 1
             )
-            
-            command = temp_command.clone()
-            command[:, :2] = torch.stack(
-                (
-                    -temp_command[:,1],
-                    temp_command[:,0]
-                ),dim=1)
             
             env.unwrapped.command_manager._terms[
                 "base_velocity"
